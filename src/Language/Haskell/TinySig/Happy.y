@@ -22,6 +22,7 @@ import Language.Haskell.TinySig.AST
   "}"                     { RightBraceTk }
   "<"                     { LeftAngleTk }
   ">"                     { RightAngleTk }
+  "?"                     { QuestionTk }
   "!"                     { BangTk }
   "@"                     { AtTk }
   "#"                     { HashTk }
@@ -39,6 +40,7 @@ import Language.Haskell.TinySig.AST
   "."                     { DotTk }
   "~"                     { TildeTk }
 
+  Number                  { NumberTk $$ }
   Ident                   { IdentTk $$ }
 
 %%
@@ -83,30 +85,31 @@ Atom
   | "(" TinySig ")"       { $2 }
   ;
 
-List
+Star
   : Atom                  { $1 }
-  | "[" Atom              { ListS $2 }
+  | Atom "*"              { StarS $1 }
+  ;
+
+Option
+  : Star                  { $1 }
+  | Star "?"              { OptionS $1 }
   ;
 
 Product
-  : sep1(List, ",")       { oneOrA ProductS $1 }
+  : Option "^" Number     { ProductS (replicate $3 $1) }
+  | sep1(Option, ",")     { oneOrA ProductS $1 }
   ;
 
 Sum
-  : sep1(Product, "+")    { oneOrA SumS $1 }
+  : Number Product        { SumS (replicate $1 $2) }
+  | sep1(Product, "+")    { oneOrA SumS $1 }
   ;
 
-DashFunction
-  : sep1(Sum, "-")        { oneOrA funS $1 }
-  ;
-
-DotFunction
-  : sep1(DashFunction, ".")
-                          { oneOrA funS $1 }
-  ;
+Function
+  : sep1(Sum, ">")        { oneOrA funS $1 }
 
 TinySig
-  : DotFunction           { $1 }
+  : Function              { $1 }
   ;
 
 {

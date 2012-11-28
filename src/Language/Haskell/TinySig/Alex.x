@@ -21,6 +21,7 @@ tokens :-
   "}"                       { token RightBraceTk }
   "<"                       { token LeftAngleTk }
   ">"                       { token RightAngleTk }
+  "?"                       { token QuestionTk }
   "!"                       { token BangTk }
   "@"                       { token AtTk }
   "#"                       { token HashTk }
@@ -39,7 +40,8 @@ tokens :-
   "."                       { token DotTk }
   "~"                       { token TildeTk }
 
-  $letter [$letter $digit]* { identifier }
+  $digit+                   { number }
+  $letter+                  { identifier }
 {
 type AlexInput
   = (Position, Word8, String)
@@ -174,6 +176,7 @@ data Token
   | RightBraceTk
   | LeftAngleTk
   | RightAngleTk
+  | QuestionTk
   | BangTk
   | AtTk
   | HashTk
@@ -192,6 +195,7 @@ data Token
   | DotTk
   | TildeTk
 
+  | NumberTk Int
   | IdentTk Ident
 
   | EOFTk
@@ -201,6 +205,11 @@ data Token
 token :: Token -> Action Token
 token tok _
   = return tok
+
+{-# INLINE number #-}
+number :: Action Token
+number input
+  = return (NumberTk (read input))
 
 {-# INLINE identifier #-}
 identifier :: Action Token

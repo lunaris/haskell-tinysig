@@ -33,8 +33,11 @@ expand rs (IdentS ident@(c : cs))
 expand rs (FunS ts1 ts2)
   = TyFun (expand rs ts1) (expand rs ts2)
 
-expand rs (ListS ts)
+expand rs (StarS ts)
   = TyList (expand rs ts)
+
+expand rs (OptionS ts)
+  = TyApp (simpleType "Maybe") (expand rs ts)
 
 expand rs (ProductS tss)
   = TyTuple Boxed (map (expand rs) tss)

@@ -6,7 +6,8 @@ type Ident
 data TinySig
   = IdentS Ident
   | FunS TinySig TinySig
-  | ListS TinySig
+  | StarS TinySig
+  | OptionS TinySig
   | ProductS [TinySig]
   | SumS [TinySig]
   | AppS TinySig TinySig

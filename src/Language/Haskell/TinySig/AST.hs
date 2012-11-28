@@ -1,14 +1,19 @@
 module Language.Haskell.TinySig.AST where
 
-type Ident
+type Variable
+  = Char
+
+type Constructor
   = String
 
 data TinySig
-  = IdentS Ident
+  = VariableS Variable
+  | ConstructorS Constructor
   | FunS TinySig TinySig
   | StarS TinySig
   | OptionS TinySig
   | ProductS [TinySig]
   | SumS [TinySig]
+  | DotS TinySig TinySig
   | AppS TinySig TinySig
   deriving (Eq, Show)

@@ -8,6 +8,8 @@ import Data.Word
 }
 
 $digit                      = [0-9]
+$lowercase                  = [a-z]
+$uppercase                  = [A-Z]
 $letter                     = [a-zA-Z_]
 
 tokens :-
@@ -41,7 +43,8 @@ tokens :-
   "~"                       { token TildeTk }
 
   $digit+                   { number }
-  $letter+                  { identifier }
+  $lowercase                { variable }
+  $uppercase $letter*       { constructor }
 {
 type AlexInput
   = (Position, Word8, String)
@@ -164,7 +167,10 @@ lexToken k
 type Action a
   = String -> LP a
 
-type Ident
+type Variable
+  = Char
+
+type Constructor
   = String
 
 data Token
@@ -196,7 +202,8 @@ data Token
   | TildeTk
 
   | NumberTk Int
-  | IdentTk Ident
+  | VariableTk Variable
+  | ConstructorTk Constructor
 
   | EOFTk
   deriving (Eq, Show)
@@ -211,8 +218,13 @@ number :: Action Token
 number input
   = return (NumberTk (read input))
 
-{-# INLINE identifier #-}
-identifier :: Action Token
-identifier input
-  = return (IdentTk input)
+{-# INLINE variable #-}
+variable :: Action Token
+variable input
+  = return (VariableTk (head input))
+
+{-# INLINE constructor #-}
+constructor :: Action Token
+constructor input
+  = return (ConstructorTk input)
 }

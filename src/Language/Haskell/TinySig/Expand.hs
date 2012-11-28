@@ -9,7 +9,7 @@ import Data.Maybe
 import Language.Haskell.Exts hiding (Rule)
 
 type Rule
-  = (Ident, Type)
+  = (Constructor, Type)
 
 simpleType :: String -> Type
 simpleType
@@ -20,15 +20,11 @@ typeVariable
   = TyVar . Ident . (:[])
 
 expand :: [Rule] -> TinySig -> Type
-expand rs (IdentS ident)
-  | Just ty <- lookup ident rs = ty
+expand rs (VariableS v)
+  = typeVariable v
 
-expand rs (IdentS ident@(c : cs))
-  | isUpper c = simpleType ident
-  | null cs   = ty
-  | otherwise = TyApp ty (expand rs (IdentS cs))
-  where
-    ty = typeVariable c
+expand rs (ConstructorS c)
+  = fromMaybe (simpleType c) (lookup c rs)
 
 expand rs (FunS ts1 ts2)
   = TyFun (expand rs ts1) (expand rs ts2)

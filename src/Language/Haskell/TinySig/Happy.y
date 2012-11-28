@@ -41,7 +41,8 @@ import Language.Haskell.TinySig.AST
   "~"                     { TildeTk }
 
   Number                  { NumberTk $$ }
-  Ident                   { IdentTk $$ }
+  Variable                { VariableTk $$ }
+  Constructor             { ConstructorTk $$ }
 
 %%
 
@@ -81,13 +82,18 @@ sep1_(x, s)
 --
 
 Atom
-  : Ident                 { IdentS $1 }
+  : Variable              { VariableS $1 }
+  | Constructor           { ConstructorS $1 }
   | "(" TinySig ")"       { $2 }
   ;
 
+Application
+  : many1(Atom)           { foldl1 AppS $1 }
+  ;
+
 Star
-  : Atom                  { $1 }
-  | Atom "*"              { StarS $1 }
+  : Application           { $1 }
+  | Application "*"       { StarS $1 }
   ;
 
 Option

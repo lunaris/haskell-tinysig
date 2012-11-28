@@ -11,6 +11,7 @@ Homepage:           http://www.doc.ic.ac.uk/~wlj05
 
 Library
   Exposed-modules:  Language.Haskell.TinySig.Alex,
+                      Language.Haskell.TinySig.Expand,
                       Language.Haskell.TinySig.Happy
 
   Other-modules:    Language.Haskell.TinySig.Position
@@ -22,6 +23,7 @@ Library
 
 Executable tinysig
   Other-modules:    Language.Haskell.TinySig.Alex,
+                      Language.Haskell.TinySig.Expand,
                       Language.Haskell.TinySig.Happy,
                       Language.Haskell.TinySig.Position
 
@@ -34,6 +36,7 @@ Executable tinysig
 
 Executable stinysig
   Other-modules:    Language.Haskell.TinySig.Alex,
+                      Language.Haskell.TinySig.Expand,
                       Language.Haskell.TinySig.Happy,
                       Language.Haskell.TinySig.Position
 

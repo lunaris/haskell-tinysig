@@ -5,7 +5,7 @@ import Language.Haskell.TinySig.Alex
 import Language.Haskell.TinySig.AST
 }
 
-%name                     parseTinySig TinySig
+%name                     tinySig TinySig
 %tokentype                { Token }
 %error                    { parseError }
 
@@ -124,4 +124,8 @@ funS
 parseError :: Token -> LP a
 parseError _
   = fail "Parse error!"
+
+parseTinySig :: String -> Either String TinySig
+parseTinySig
+  = evalLP tinySig
 }

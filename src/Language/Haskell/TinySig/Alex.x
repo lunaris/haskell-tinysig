@@ -30,6 +30,7 @@ tokens :-
   "&"                       { token AmpersandTk }
   "*"                       { token AsteriskTk }
   "-"                       { token HyphenTk }
+  "="                       { token EqualsTk }
   "+"                       { token PlusTk }
   "|"                       { token PipeTk }
   ";"                       { token SemiTk }
@@ -182,6 +183,7 @@ data Token
   | AmpersandTk
   | AsteriskTk
   | HyphenTk
+  | EqualsTk
   | PlusTk
   | PipeTk
   | SemiTk

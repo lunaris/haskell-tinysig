@@ -1,7 +1,10 @@
+{-# LANGUAGE PatternGuards #-}
+
 module Language.Haskell.TinySig.Expand where
 
 import Language.Haskell.TinySig.AST
 
+import Data.Char
 import Data.Maybe
 import Language.Haskell.Exts hiding (Rule)
 
@@ -18,7 +21,14 @@ typeVariable
 
 expand :: [Rule] -> TinySig -> Type
 expand rs (IdentS ident)
-  = fromMaybe (typeVariable ident) (lookup ident rs)
+  | Just ty <- lookup ident rs
+      = ty
+
+  | c : cs <- ident, isUpper c
+      = simpleType ident
+
+  | otherwise
+      = typeVariable ident
 
 expand rs (FunS ts1 ts2)
   = TyFun (expand rs ts1) (expand rs ts2)

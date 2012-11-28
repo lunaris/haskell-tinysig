@@ -1,0 +1,31 @@
+Name:               TinySig
+Description:        Expands an abbreviated Haskell type signature.
+
+Version:            0.0
+Cabal-version:      >= 1.8
+Build-type:         Simple
+
+License:            AllRightsReserved
+Copyright:          Will Jones
+Homepage:           http://www.doc.ic.ac.uk/~wlj05
+
+Executable tinysig
+  Other-modules:    Language.Haskell.TinySig.Alex, Language.Haskell.TinySig.Happy
+
+  Build-depends:    array, base
+  Build-tools:      alex, happy
+
+  Main-is:          Language/Haskell/TinySig.hs
+  Hs-source-dirs:   src
+  Ghc-options:      -main-is Language.Haskell.TinySig
+
+Executable stinysig
+  Other-modules:    Language.Haskell.TinySig.Alex, Language.Haskell.TinySig.Happy
+
+  Build-depends:    array, base
+  Build-tools:      alex, happy
+
+  Main-is:          Language/Haskell/TinySig.hs
+  Hs-source-dirs:   src
+  Ghc-options:      -main-is Language.Haskell.TinySig -static -optc-static
+                      -optl-static -fvia-c -optl-pthread

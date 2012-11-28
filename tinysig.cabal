@@ -9,10 +9,23 @@ License:            AllRightsReserved
 Copyright:          Will Jones
 Homepage:           http://www.doc.ic.ac.uk/~wlj05
 
-Executable tinysig
-  Other-modules:    Language.Haskell.TinySig.Alex, Language.Haskell.TinySig.Happy
+Library
+  Exposed-modules:  Language.Haskell.TinySig.Alex,
+                      Language.Haskell.TinySig.Happy
 
-  Build-depends:    array, base
+  Other-modules:    Language.Haskell.TinySig.Position
+
+  Build-depends:    array, base, haskell-src-exts
+  Build-tools:      alex, happy
+
+  Hs-source-dirs:   src
+
+Executable tinysig
+  Other-modules:    Language.Haskell.TinySig.Alex,
+                      Language.Haskell.TinySig.Happy,
+                      Language.Haskell.TinySig.Position
+
+  Build-depends:    array, base, haskell-src-exts
   Build-tools:      alex, happy
 
   Main-is:          Language/Haskell/TinySig.hs
@@ -20,9 +33,11 @@ Executable tinysig
   Ghc-options:      -main-is Language.Haskell.TinySig
 
 Executable stinysig
-  Other-modules:    Language.Haskell.TinySig.Alex, Language.Haskell.TinySig.Happy
+  Other-modules:    Language.Haskell.TinySig.Alex,
+                      Language.Haskell.TinySig.Happy,
+                      Language.Haskell.TinySig.Position
 
-  Build-depends:    array, base
+  Build-depends:    array, base, haskell-src-exts
   Build-tools:      alex, happy
 
   Main-is:          Language/Haskell/TinySig.hs

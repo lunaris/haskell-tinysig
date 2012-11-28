@@ -7,77 +7,11 @@ import Control.Monad
 import Data.Word
 }
 
-@reserved                   = "abstract" | "strictfp" | "interface" | "super"
-                            | "extends" | "long" | "byte" | "final" | "native"
-                            | "synchronized" | "finally" | "this" | "catch"
-                            | "package" | "throw" | "private" | "throws"
-                            | "goto" | "protected" | "transient" | "public"
-                            | "try" | "continue" | "implements" | "import"
-                            | "short" | "volatile" | "instanceof" | "static"
-
 $digit                      = [0-9]
 $letter                     = [a-zA-Z_]
-$hexDigit                   = [0-9a-fA-F]
-
-@decimal                    = 0 | [1-9] $digit*
-@hexadecimal                = 0 [xX] $hexDigit+
-
-@char                       = "'" $printable "'"
-@string                     = \" ($printable # \")* \"
 
 tokens :-
   $white+                   ;
-  "//".*                    ;
-
-  @reserved                 { reserved }
-
-  "void"                    { token VoidTk }
-  "boolean"                 { token BooleanTk }
-  "char"                    { token CharTk }
-  "String"                  { token StringTk }
-  "int"                     { token IntTk }
-  "float"                   { token FloatTk }
-  "double"                  { token DoubleTk }
-
-  "const"                   { token ConstTk }
-
-  "null"                    { token NullTk }
-  "true"                    { token TrueTk }
-  "false"                   { token FalseTk }
-
-  "class"                   { token ClassTk }
-  "enum"                    { token EnumTk }
-
-  "="                       { token AssignTk }
-  "new"                     { token NewTk }
-
-  "+"                       { token PlusTk }
-  "++"                      { token PlusPlusTk }
-  "-"                       { token MinusTk }
-  "--"                      { token MinusMinusTk }
-  "*"                       { token TimesTk }
-  "/"                       { token DivideTk }
-  "%"                       { token ModTk }
-  "=="                      { token EqualTk }
-  "!="                      { token NotEqualTk }
-  "<"                       { token LessThanTk }
-  "<="                      { token LessThanEqualTk }
-  ">"                       { token GreaterThanTk }
-  ">="                      { token GreaterThanEqualTk }
-  "&&"                      { token AndTk }
-  "||"                      { token OrTk }
-  "^"                       { token XorTk }
-  "!"                       { token NotTk }
-
-  "if"                      { token IfTk }
-  "else"                    { token ElseTk }
-  "for"                     { token ForTk }
-  "while"                   { token WhileTk }
-  "do"                      { token DoTk }
-  "switch"                  { token SwitchTk }
-  "case"                    { token CaseTk }
-  "default"                 { token DefaultTk }
-  "return"                  { token ReturnTk }
 
   "("                       { token LeftParenTk }
   ")"                       { token RightParenTk }
@@ -85,18 +19,26 @@ tokens :-
   "]"                       { token RightBracketTk }
   "{"                       { token LeftBraceTk }
   "}"                       { token RightBraceTk }
+  "<"                       { token LeftAngleTk }
+  ">"                       { token RightAngleTk }
+  "!"                       { token BangTk }
+  "@"                       { token AtTk }
+  "#"                       { token HashTk }
+  "$"                       { token DollarTk }
+  "%"                       { token PercentTk }
+  "^"                       { token CaretTk }
+  "&"                       { token AmpersandTk }
+  "*"                       { token AsteriskTk }
+  "-"                       { token HyphenTk }
+  "+"                       { token PlusTk }
+  "|"                       { token PipeTk }
   ";"                       { token SemiTk }
   ":"                       { token ColonTk }
   ","                       { token CommaTk }
   "."                       { token DotTk }
+  "~"                       { token TildeTk }
 
   $letter [$letter $digit]* { identifier }
-
-  @char                     { char }
-  @string                   { string }
-
-  @decimal                  { decimal }
-  @hexadecimal              { hexadecimal }
 {
 type AlexInput
   = (Position, Word8, String)
@@ -165,6 +107,10 @@ instance Monad LP where
   return x
     = LP $ \s -> Right (x, s)
 
+  {-# INLINE fail #-}
+  fail err
+    = LP $ \_ -> Left err
+
 getAlexInput :: LP AlexInput
 getAlexInput
   = LP $ \s@LPState { lpPosition = pos, lpPrevious = w, lpInput = input } ->
@@ -218,110 +164,44 @@ type Action a
 type Ident
   = String
 
-{-# INLINE identifier #-}
-identifier :: Action Token
-identifier input
-  = return (IdentTk input)
-
 data Token
-  = ReservedTk String
-
-  | VoidTk
-  | BooleanTk
-  | CharTk
-  | StringTk
-  | IntTk
-  | FloatTk
-  | DoubleTk
-
-  | ConstTk
-
-  | NullTk
-  | TrueTk
-  | FalseTk
-
-  | ClassTk
-  | EnumTk
-
-  | AssignTk
-  | NewTk
-
-  | PlusTk
-  | PlusPlusTk
-  | MinusTk
-  | MinusMinusTk
-  | TimesTk
-  | DivideTk
-  | ModTk
-  | EqualTk
-  | NotEqualTk
-  | LessThanTk
-  | LessThanEqualTk
-  | GreaterThanTk
-  | GreaterThanEqualTk
-  | AndTk
-  | OrTk
-  | XorTk
-  | NotTk
-
-  | IfTk
-  | ElseTk
-  | ForTk
-  | WhileTk
-  | DoTk
-  | SwitchTk
-  | CaseTk
-  | DefaultTk
-  | ReturnTk
-
-  | LeftParenTk
+  = LeftParenTk
   | RightParenTk
   | LeftBracketTk
   | RightBracketTk
   | LeftBraceTk
   | RightBraceTk
+  | LeftAngleTk
+  | RightAngleTk
+  | BangTk
+  | AtTk
+  | HashTk
+  | DollarTk
+  | PercentTk
+  | CaretTk
+  | AmpersandTk
+  | AsteriskTk
+  | HyphenTk
+  | PlusTk
+  | PipeTk
   | SemiTk
   | ColonTk
   | CommaTk
   | DotTk
+  | TildeTk
 
   | IdentTk Ident
 
-  | CharLiteralTk Char
-  | StringLiteralTk String
-  | IntLiteralTk Int
-  | DoubleLiteralTk Double
-
   | EOFTk
   deriving (Eq, Show)
-
-{-# INLINE reserved #-}
-reserved :: Action Token
-reserved input
-  = return (ReservedTk input)
 
 {-# INLINE token #-}
 token :: Token -> Action Token
 token tok _
   = return tok
 
-{-# INLINE char #-}
-char :: Action Token
-char input
-  = return (CharLiteralTk (head (tail (init input))))
-
-{-# INLINE string #-}
-string :: Action Token
-string input
-  = return (StringLiteralTk (tail (init input)))
-
-{-# INLINE decimal #-}
-decimal :: Action Token
-decimal input
-  = return (IntLiteralTk (read input))
-
-{-# INLINE hexadecimal #-}
-hexadecimal :: Action Token
-hexadecimal input
-  = return (IntLiteralTk (read input))
+{-# INLINE identifier #-}
+identifier :: Action Token
+identifier input
+  = return (IdentTk input)
 }
